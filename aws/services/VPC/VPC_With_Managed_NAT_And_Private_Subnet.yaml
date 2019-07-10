@@ -11,15 +11,15 @@
   Mappings:
     SubnetConfig:
       VPC:
-        CIDR: "10.0.0.0/16"
+        CIDR: "10.10.0.0/16"
       Public0:
-        CIDR: "10.0.0.0/24"
+        CIDR: "10.10.4.0/24"
       Public1:
-        CIDR: "10.0.1.0/24"
+        CIDR: "10.10.5.0/24"
       Private0:
-        CIDR: "10.0.2.0/24"
+        CIDR: "10.10.1.0/24"
       Private1:
-        CIDR: "10.0.3.0/24"
+        CIDR: "10.10.2.0/24"
 
     # This mapping accounts for the scenario when certain AZs
     # are not available to use (this differs on a per account
@@ -257,7 +257,7 @@
       Properties:
         RouteTableId:
           Ref: "PublicRouteTable"
-        DestinationCidrBlock: "0.0.0.0/0"
+        DestinationCidrBlock: "159.122.65.208/32"
         GatewayId:
           Ref: "InternetGateway"
 
@@ -432,6 +432,26 @@
           Ref: "PrivateSubnet1"
         RouteTableId:
           Ref: "PrivateRouteTable1"
+
+    VPCEndpointS3:
+      Type: "AWS::EC2::VPCEndpoint"
+      Properties:
+        RouteTableIds: 
+          - Ref: "PrivateRouteTable0"
+          - Ref: "PrivateRouteTable1"
+        ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
+        VpcId: 
+          Ref: "VPC"
+
+    VPCEndpointDynamoDB:
+      Type: "AWS::EC2::VPCEndpoint"
+      Properties:
+        RouteTableIds: 
+          - Ref: "PrivateRouteTable0"
+          - Ref: "PrivateRouteTable1"
+        ServiceName: !Sub 'com.amazonaws.${AWS::Region}.dynamodb'
+        VpcId: 
+          Ref: "VPC"
 
   Outputs:
 
